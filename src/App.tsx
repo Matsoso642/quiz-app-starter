@@ -1,28 +1,23 @@
+import "bootstrap/dist/css/bootstrap.min.css";
 import questions from "./data/questions";
 import "./App.css";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <div className="app">
-      <h1>Quiz App</h1>
-      <p>
-        {questions.length} question{questions.length !== 1 ? "s" : ""} loaded
-      </p>
+    <div className="app-layout">
+        <Navbar/>
 
-      {/*
-        This is your starting point. Build your quiz from here.
+        <main className="main-content">
+          <h1 className="display-4">Welcome To Beta Quiz</h1>
+          <p className="lead">Sharpen your development skills with quizzes covering Git, GitHub, React, TypeScript, Node.js, npm, ESLint, and more. Learn, practice, and grow one question at a time. {questions.length} question{questions.length !== 1 ? "s" : ""} loaded</p>
+      <div className="text-center">
+        <button className="btn btn-primary">Start Quiz</button>
+      </div>
+        </main>
+      </div>
+  );      
 
-        Some things to figure out:
-        - How do you display one question at a time?
-        - How does the user select an answer?
-        - How do you track the score?
-        - How do you move to the next question?
-        - What happens when the quiz is done?
 
-        There's no single right way — make it your own.
-      */}
-    </div>
-  );
 }
-
 export default App;

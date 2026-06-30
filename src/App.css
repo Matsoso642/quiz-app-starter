@@ -1,7 +1,47 @@
 /* Minimal reset — you own the design from here. */
 
-.app {
-  max-width: 800px;
-  margin: 0 auto;
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
   padding: 2rem;
 }
+
+.sidebar{
+  width: 250px;
+  background: #1E1B4B;
+  color: white;
+  padding: 1.5rem;
+  min-height: 100vh;
+  box-shadow: 4px 0 12px rgb(0,0,0, 0.2);
+}
+
+.sidebar h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar nav li {
+  margin-bottom: 0.8rem;
+}
+
+.sidebar nav a {
+  color:white;
+  text-decoration: none;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.sidebar nav a:hover {
+  background: #312E81;
+}
+
