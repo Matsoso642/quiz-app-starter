@@ -58,7 +58,7 @@ const categories: Category[] = [
     iconColor: "#16A34A",
   },
   {
-    id: "htmlcss",
+    id: "html-css",
     title: "HTML & CSS",
     description:
       "Semantic HTML, flexbox, responsive design, and CSS selectors.",

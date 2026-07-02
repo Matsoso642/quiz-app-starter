@@ -298,7 +298,7 @@ const questions: Question[] = [
     question: "Which of these is an example of semantic HTML?",
     options: ['<div class="header">', "<header>", '<span id="top">', "<b>"],
     correctAnswer: 1,
-    category: "htmlcss",
+    category: "html-css",
     explanation:
       "Semantic elements like <header>, <nav>, and <footer> describe their meaning to both the browser and developer, unlike generic <div>s.",
   },
@@ -312,7 +312,7 @@ const questions: Question[] = [
       "Changes the text color",
     ],
     correctAnswer: 1,
-    category: "htmlcss",
+    category: "html-css",
     explanation:
       "Flexbox (display: flex) lets you align and distribute space among items in a container, even when sizes are unknown.",
   },
@@ -326,7 +326,7 @@ const questions: Question[] = [
       "Increasing the default font size only",
     ],
     correctAnswer: 1,
-    category: "htmlcss",
+    category: "html-css",
     explanation:
       "Responsive design ensures a layout adjusts and looks good across different devices and screen sizes, often using media queries.",
   },
@@ -335,7 +335,7 @@ const questions: Question[] = [
     question: 'Which CSS selector targets an element with `id="nav"`?',
     options: [".nav", "#nav", "*nav", "nav*"],
     correctAnswer: 1,
-    category: "htmlcss",
+    category: "html-css",
     explanation:
       "The # symbol targets an element by its id attribute, while . targets elements by class.",
   },
