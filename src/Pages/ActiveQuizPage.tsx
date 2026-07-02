@@ -1,27 +1,45 @@
 // src/Pages/ActiveQuizPage.tsx
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./ActiveQuizPage.css";
 import type { Question } from "../types/quiz";
 import questions from "../data/questions";
 
-// ── Mock state — swap for real props/state when wiring logic ──
-const CURRENT_INDEX = 0;
+const TIMER_SECONDS = { easy: 30, medium: 45, hard: 60 };
 const DIFFICULTY: "easy" | "medium" | "hard" = "medium";
 const TIME_LEFT = 28;
 
-// Derived values
-const TIMER_SECONDS = { easy: 30, medium: 45, hard: 60 };
-const currentQuestion: Question = questions[CURRENT_INDEX];
-const TOTAL_QUESTIONS = questions.length;
-const CURRENT_QUESTION = CURRENT_INDEX + 1;
-const progressPercent = (CURRENT_QUESTION / TOTAL_QUESTIONS) * 100;
-const timerMax = TIMER_SECONDS[DIFFICULTY];
-const timerPercent = (TIME_LEFT / timerMax) * 100;
-const timerWarning = timerPercent <= 40;
-const timerDanger = timerPercent <= 20;
-
 export default function ActiveQuizPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const routeQuestions: Question[] = location.state?.selectedQuestions ?? questions;
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+
+  const currentQuestion: Question = routeQuestions[currentIndex];
+  const TOTAL_QUESTIONS = routeQuestions.length;
+  const CURRENT_QUESTION = currentIndex + 1;
+  const progressPercent = (CURRENT_QUESTION / TOTAL_QUESTIONS) * 100;
+  const timerMax = TIMER_SECONDS[DIFFICULTY];
+  const timerPercent = (TIME_LEFT / timerMax) * 100;
+  const timerWarning = timerPercent <= 40;
+  const timerDanger = timerPercent <= 20;
+
+  const handleNext = () => {
+    if (selectedOption === null) return;
+
+    if (currentIndex + 1 < TOTAL_QUESTIONS) {
+      setCurrentIndex((index) => index + 1);
+      setSelectedOption(null);
+      return;
+    }
+
+    navigate("/results");
+  };
+
+  const handleExit = () => {
+    navigate("/");
+  };
 
   return (
     <div className="active-quiz-wrapper">
@@ -105,12 +123,16 @@ export default function ActiveQuizPage() {
 
       {/* ── Footer: exit + next ── */}
       <div className="aq-footer">
-        <button className="btn btn-outline-secondary aq-btn-back">
+        <button className="btn btn-outline-secondary aq-btn-back" onClick={handleExit}>
           <i className="bi bi-x me-1" />
           Exit
         </button>
-        <button className="btn btn-primary aq-btn-next">
-          Next
+        <button
+          className="btn btn-primary aq-btn-next"
+          onClick={handleNext}
+          disabled={selectedOption === null}
+        >
+          {currentIndex + 1 < TOTAL_QUESTIONS ? "Next" : "Finish"}
           <i className="bi bi-arrow-right ms-1" />
         </button>
       </div>

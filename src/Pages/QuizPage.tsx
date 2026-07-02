@@ -1,9 +1,12 @@
 // src/pages/QuizPage.tsx
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import CategoryGrid from "../components/CategoryGrid";
 import DifficultyCard from "../components/DifficultyCard";
 import categories from "../data/categories";
+import questions from "../data/questions";
+
 
 function QuizPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -11,6 +14,27 @@ function QuizPage() {
     null,
   );
   const canStart = selectedCategory !== null && selectedDifficulty !== null;
+
+  const navigate = useNavigate();
+
+  const categoryQuestions =
+    selectedCategory !== null
+      ? questions.filter((q) => q.category === selectedCategory)
+      : [];
+
+  const selectedQuestions = categoryQuestions.slice(0, 10);
+
+  const handleStartQuiz = () => {
+    if (!canStart) return;
+
+    navigate("/active-quiz", {
+      state: {
+        selectedQuestions,
+        selectedCategory,
+        selectedDifficulty,
+      },
+    });
+  };
 
   return (
     <>
@@ -32,6 +56,7 @@ function QuizPage() {
               selected={selectedDifficulty}
               onSelect={setSelectedDifficulty}
               canStart={canStart}
+              onStart={handleStartQuiz}
             />
           </div>
         </div>

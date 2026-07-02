@@ -1,5 +1,4 @@
 // src/components/DifficultyCard.tsx
-import { useNavigate } from "react-router-dom";
 import DifficultyOption from "./DifficultyOption";
 
 const difficulties = [
@@ -27,10 +26,10 @@ interface DifficultyCardProps {
   selected: string | null;
   onSelect: (id: string) => void;
   canStart: boolean;
+  onStart: () => void;
 }
 
-function DifficultyCard({ selected, onSelect, canStart }: DifficultyCardProps) {
-  const navigate = useNavigate();
+function DifficultyCard({ selected, onSelect, canStart, onStart }: DifficultyCardProps) {
   return (
     <div className="card difficulty-card">
       <div className="card-body">
@@ -48,7 +47,7 @@ function DifficultyCard({ selected, onSelect, canStart }: DifficultyCardProps) {
         <button
           className="btn btn-primary w-100 mt-3"
           disabled={!canStart}
-          onClick={() => navigate("/active-quiz")}
+          onClick={onStart}
         >
           <i className="bi bi-play-fill me-2" />
           Start Quiz

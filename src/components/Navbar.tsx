@@ -28,8 +28,6 @@ function Navbar(){
             <nav>
                     <ul>
                         <li><a href="#"><i className="bi bi-plus-circle" /> New Quiz</a></li>
-                        <li><a href="#"><i className="bi bi-bar-chart" /> Stats</a></li>
-                        <li><a href="#"><i className="bi bi-eye" /> Review</a></li>
                     </ul>
                 </nav>
             </aside>
