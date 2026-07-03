@@ -4,6 +4,12 @@ export interface Question {
   options: string[];
   correctAnswer: number;
   category:
-  "git" | "react" | "typescript" | "tooling" | "deployment" | "html-css" | "devtools";
+    | "git"
+    | "react"
+    | "typescript"
+    | "tooling"
+    | "deployment"
+    | "html-css"
+    | "devtools";
   explanation: string;
 }
