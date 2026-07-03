@@ -39,8 +39,8 @@ export default function ActiveQuizPage() {
   const CURRENT_QUESTION = currentIndex + 1;
   const progressPercent = (CURRENT_QUESTION / TOTAL_QUESTIONS) * 100;
   const timerPercent = (timeLeft / totalTime) * 100;
-  const timerWarning = timerPercent <= 40;
-  const timerDanger = timerPercent <= 20;
+  const timerWarning = timerPercent <= 50;
+  const timerDanger = timerPercent <= 25;
 
   // Records an answer and moves to the next question, or finishes the quiz
   // and navigates to /results.
