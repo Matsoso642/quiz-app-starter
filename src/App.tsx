@@ -5,9 +5,9 @@ import "./App.css";
 import Homepage from "./Pages/Homepage";
 import ActiveQuizPage from "./Pages/ActiveQuizPage";
 import Navbar from "./components/Navbar";
-import ResultsPage from"./Pages/ResultsPage";
-
+import ResultsPage from "./Pages/ResultsPage";
 import QuizPage from "./Pages/QuizPage";
+import LeaderboardPage from "./Pages/LeaderboardPage";
 
 function App() {
   return (
@@ -20,6 +20,7 @@ function App() {
             <Route path="/quiz" element={<QuizPage />} />
             <Route path="/active-quiz" element={<ActiveQuizPage />} />
             <Route path="/results" element={<ResultsPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
           </Routes>
         </main>
       </div>
