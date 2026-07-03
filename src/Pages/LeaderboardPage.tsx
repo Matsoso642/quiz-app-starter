@@ -71,7 +71,7 @@ export default function LeaderboardPage() {
   return (
     <>
       <Header
-        title="Leaderboard & Stats"
+        title="Stats"
         subtitle="View your quiz performance and track your progress"
       />
 
