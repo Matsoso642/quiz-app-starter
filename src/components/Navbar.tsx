@@ -44,7 +44,7 @@ function Navbar() {
             </li>
             <li>
               <Link to="/leaderboard" onClick={closeMenu}>
-                <i className="bi bi-trophy" /> Leaderboard & Stats
+                <i className="bi bi-trophy" /> Stats
               </Link>
             </li>
           </ul>
