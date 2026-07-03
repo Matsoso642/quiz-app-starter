@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./ActiveQuizPage.css";
 import type { Question } from "../types/quiz";
 import questions from "../data/questions";
-
 const TIMER_SECONDS = { easy: 30, medium: 45, hard: 60 };
 const DIFFICULTY: "easy" | "medium" | "hard" = "medium";
 const TIME_LEFT = 28;
@@ -12,7 +11,8 @@ const TIME_LEFT = 28;
 export default function ActiveQuizPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const routeQuestions: Question[] = location.state?.selectedQuestions ?? questions;
+  const routeQuestions: Question[] =
+    location.state?.selectedQuestions ?? questions;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
@@ -123,7 +123,10 @@ export default function ActiveQuizPage() {
 
       {/* ── Footer: exit + next ── */}
       <div className="aq-footer">
-        <button className="btn btn-outline-secondary aq-btn-back" onClick={handleExit}>
+        <button
+          className="btn btn-outline-secondary aq-btn-back"
+          onClick={handleExit}
+        >
           <i className="bi bi-x me-1" />
           Exit
         </button>
