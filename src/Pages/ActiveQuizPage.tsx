@@ -3,7 +3,9 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./ActiveQuizPage.css";
 import type { Question } from "../types/quiz";
+import type { AnswerRecord } from "../types/results";
 import questions from "../data/questions";
+
 const TIMER_SECONDS = { easy: 30, medium: 45, hard: 60 };
 const DIFFICULTY: "easy" | "medium" | "hard" = "medium";
 const TIME_LEFT = 28;
@@ -15,6 +17,10 @@ export default function ActiveQuizPage() {
     location.state?.selectedQuestions ?? questions;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+
+  // Answers collected so far, plus when the quiz started (for elapsed time).
+  const [answers, setAnswers] = useState<AnswerRecord[]>([]);
+  const [startTime] = useState(() => Date.now());
 
   const currentQuestion: Question = routeQuestions[currentIndex];
   const TOTAL_QUESTIONS = routeQuestions.length;
@@ -28,13 +34,26 @@ export default function ActiveQuizPage() {
   const handleNext = () => {
     if (selectedOption === null) return;
 
+    const answerRecord: AnswerRecord = {
+      question: currentQuestion,
+      selectedAnswer: selectedOption,
+      isCorrect: selectedOption === currentQuestion.correctAnswer,
+    };
+    // Use a local variable rather than relying on the (async) state update,
+    // since we need the complete, up-to-date array immediately below.
+    const updatedAnswers = [...answers, answerRecord];
+
     if (currentIndex + 1 < TOTAL_QUESTIONS) {
+      setAnswers(updatedAnswers);
       setCurrentIndex((index) => index + 1);
       setSelectedOption(null);
       return;
     }
 
-    navigate("/results");
+    const timeTakenSeconds = Math.round((Date.now() - startTime) / 1000);
+    navigate("/results", {
+      state: { answers: updatedAnswers, timeTakenSeconds },
+    });
   };
 
   const handleExit = () => {
