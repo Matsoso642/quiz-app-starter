@@ -10,21 +10,17 @@ import CategoryBreakdown from "../components/CategoryBreakdown";
 
 const MOCK_SCORE = 8;
 const MOCK_TOTAL = 10;
-const MOCK_ACCURACY = Math.round ((MOCK_SCORE/MOCK_TOTAL)*100);
-const MOCK_TIME_TAKEN ="4.32";
-
-
+const MOCK_ACCURACY = Math.round((MOCK_SCORE / MOCK_TOTAL) * 100);
+const MOCK_TIME_TAKEN = "4.32";
 
 const MOCK_CATEGORY_BREAKDOWN = [
-    {category: "git", correct: 3, total: 4},
-    {category: "react", correct:3, total:4},
-    {category: "typescript", correct:3, total:4},
-    {category: "devtools", correct:3, total:4},
-    {category: "deployment", correct:3, total:4},
-    {category: "html-css", correct:3, total:4},
-
+  { category: "git", correct: 3, total: 4 },
+  { category: "react", correct: 3, total: 4 },
+  { category: "typescript", correct: 3, total: 4 },
+  { category: "devtools", correct: 3, total: 4 },
+  { category: "deployment", correct: 3, total: 4 },
+  { category: "html-css", correct: 3, total: 4 },
 ];
-
 
 const MOCK_REVIEW = [
   {
@@ -50,7 +46,8 @@ const MOCK_REVIEW = [
     question: "What is a React component?",
     isCorrect: true,
     yourAnswer: "A reusable piece of UI, typically a function that returns JSX",
-    correctAnswer: "A reusable piece of UI, typically a function that returns JSX",
+    correctAnswer:
+      "A reusable piece of UI, typically a function that returns JSX",
     explanation:
       "Components are the building blocks of a React app — reusable functions that return UI described in JSX.",
   },
