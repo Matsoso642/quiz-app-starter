@@ -14,7 +14,11 @@ function CategoryGrid({ categories, selectedId, onSelect }: CategoryGridProps) {
       <div className="row g-3">
         {categories.map((cat) => (
           <div className="col-md-6" key={cat.id}>
-            <CategoryCard category={cat} selected={cat.id === selectedId} onSelect={() => onSelect(cat.id)} />
+            <CategoryCard
+              category={cat}
+              selected={cat.id === selectedId}
+              onSelect={() => onSelect(cat.id)}
+            />
           </div>
         ))}
       </div>
