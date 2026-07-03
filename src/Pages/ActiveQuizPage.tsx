@@ -6,7 +6,7 @@ import type { Question } from "../types/quiz";
 import type { AnswerRecord } from "../types/results";
 import questions from "../data/questions";
 
-const TIMER_SECONDS = { easy: 7.5, medium: 11.25, hard: 15 };
+const TIMER_SECONDS = { easy: 15, medium: 11.25, hard: 7.5 };
 
 export default function ActiveQuizPage() {
   const navigate = useNavigate();
