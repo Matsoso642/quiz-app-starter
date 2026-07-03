@@ -1,5 +1,5 @@
 // src/Pages/ActiveQuizPage.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./ActiveQuizPage.css";
 import type { Question } from "../types/quiz";
@@ -7,40 +7,50 @@ import type { AnswerRecord } from "../types/results";
 import questions from "../data/questions";
 
 const TIMER_SECONDS = { easy: 7.5, medium: 11.25, hard: 15 };
-const DIFFICULTY: "easy" | "medium" | "hard" = "medium";
-const TIME_LEFT = 28;
 
 export default function ActiveQuizPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const routeQuestions: Question[] =
     location.state?.selectedQuestions ?? questions;
+  const rawDifficulty = (
+    location.state?.selectedDifficulty as string | undefined
+  )?.toLowerCase();
+  const difficulty: "easy" | "medium" | "hard" =
+    rawDifficulty === "easy" || rawDifficulty === "hard"
+      ? rawDifficulty
+      : "medium";
+
+  const TOTAL_QUESTIONS = routeQuestions.length;
+  // Per-question budget × question count = one continuous clock for the
+  // whole quiz. Adjust this if you'd rather TIMER_SECONDS be the total
+  // quiz duration outright, regardless of question count.
+  const totalTime = TIMER_SECONDS[difficulty] * TOTAL_QUESTIONS;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState(totalTime);
 
   // Answers collected so far, plus when the quiz started (for elapsed time).
   const [answers, setAnswers] = useState<AnswerRecord[]>([]);
   const [startTime] = useState(() => Date.now());
 
   const currentQuestion: Question = routeQuestions[currentIndex];
-  const TOTAL_QUESTIONS = routeQuestions.length;
   const CURRENT_QUESTION = currentIndex + 1;
   const progressPercent = (CURRENT_QUESTION / TOTAL_QUESTIONS) * 100;
-  const timerMax = TIMER_SECONDS[DIFFICULTY];
-  const timerPercent = (TIME_LEFT / timerMax) * 100;
+  const timerPercent = (timeLeft / totalTime) * 100;
   const timerWarning = timerPercent <= 40;
   const timerDanger = timerPercent <= 20;
 
-  const handleNext = () => {
-    if (selectedOption === null) return;
-
+  // Records an answer and moves to the next question, or finishes the quiz
+  // and navigates to /results.
+  const handleAdvance = (answerIndex: number | null) => {
     const answerRecord: AnswerRecord = {
       question: currentQuestion,
-      selectedAnswer: selectedOption,
-      isCorrect: selectedOption === currentQuestion.correctAnswer,
+      selectedAnswer: answerIndex,
+      isCorrect:
+        answerIndex !== null && answerIndex === currentQuestion.correctAnswer,
     };
-    // Use a local variable rather than relying on the (async) state update,
-    // since we need the complete, up-to-date array immediately below.
     const updatedAnswers = [...answers, answerRecord];
 
     if (currentIndex + 1 < TOTAL_QUESTIONS) {
@@ -56,9 +66,55 @@ export default function ActiveQuizPage() {
     });
   };
 
+  const handleNext = () => {
+    if (selectedOption === null) return;
+    handleAdvance(selectedOption);
+  };
+
   const handleExit = () => {
     navigate("/");
   };
+
+  // Called once the overall quiz clock reaches 0. Records the current
+  // question's answer (possibly unanswered) and marks every remaining
+  // question as unanswered too, so the results page still sees a complete,
+  // correctly-scored answers array.
+  const handleQuizTimeUp = () => {
+    const currentAnswer: AnswerRecord = {
+      question: currentQuestion,
+      selectedAnswer: selectedOption,
+      isCorrect:
+        selectedOption !== null &&
+        selectedOption === currentQuestion.correctAnswer,
+    };
+    const remainingUnanswered: AnswerRecord[] = routeQuestions
+      .slice(currentIndex + 1)
+      .map((question) => ({
+        question,
+        selectedAnswer: null,
+        isCorrect: false,
+      }));
+
+    const updatedAnswers = [...answers, currentAnswer, ...remainingUnanswered];
+    const timeTakenSeconds = Math.round((Date.now() - startTime) / 1000);
+
+    navigate("/results", {
+      state: { answers: updatedAnswers, timeTakenSeconds },
+    });
+  };
+
+  // Single continuous countdown for the whole quiz — it does NOT reset when
+  // currentIndex changes, only when this effect re-runs due to timeLeft
+  // itself changing.
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      handleQuizTimeUp();
+      return;
+    }
+    const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft]);
 
   return (
     <div className="active-quiz-wrapper">
@@ -94,7 +150,7 @@ export default function ActiveQuizPage() {
                 className="aq-timer-arc"
               />
             </svg>
-            <span className="aq-timer-label">{TIME_LEFT}s</span>
+            <span className="aq-timer-label">{timeLeft}s</span>
           </div>
         </div>
       </div>
