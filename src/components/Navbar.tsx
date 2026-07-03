@@ -32,18 +32,15 @@ function Navbar() {
           </button>
         </div>
 
-        <nav>
-          <ul>
-            <li>
-              <a href="#">
-                <i className="bi bi-plus-circle" /> New Quiz
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-    </>
-  );
+
+            <nav>
+                    <ul>
+                        <li><a href="#"><i className="bi bi-plus-circle" /> New Quiz</a></li>
+                    </ul>
+                </nav>
+            </aside>
+        </>
+    )
 }
 
 export default Navbar;
