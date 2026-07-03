@@ -1,7 +1,10 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+
+  const closeMenu = () => setOpen(false);
 
   return (
     <>
@@ -32,15 +35,23 @@ function Navbar() {
           </button>
         </div>
 
-
-            <nav>
-                    <ul>
-                        <li><a href="#"><i className="bi bi-plus-circle" /> New Quiz</a></li>
-                    </ul>
-                </nav>
-            </aside>
-        </>
-    )
+        <nav>
+          <ul>
+            <li>
+              <Link to="/quiz" onClick={closeMenu}>
+                <i className="bi bi-plus-circle" /> New Quiz
+              </Link>
+            </li>
+            <li>
+              <Link to="/leaderboard" onClick={closeMenu}>
+                <i className="bi bi-trophy" /> Leaderboard & Stats
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+    </>
+  );
 }
 
 export default Navbar;

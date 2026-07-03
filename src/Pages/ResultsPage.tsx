@@ -90,12 +90,16 @@ export default function ResultsPage() {
   // Record this attempt for the leaderboard once, when results first load.
   useEffect(() => {
     if (!resultsState || total === 0) return;
+    const category =
+      answers.length > 0 ? answers[0].question.category : "mixed";
     const entry = {
+      id: `${Date.now()}-${Math.random()}`,
       score,
       total,
       accuracy,
-      timeTakenSeconds,
-      date: new Date().toISOString(),
+      category,
+      timeTaken: timeTaken,
+      date: new Date().toLocaleDateString(),
     };
     const existing = JSON.parse(localStorage.getItem(LEADERBOARD_KEY) ?? "[]");
     localStorage.setItem(LEADERBOARD_KEY, JSON.stringify([...existing, entry]));
