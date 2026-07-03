@@ -4,10 +4,10 @@ Starter template for the ACA orientation quiz project. Fork this repo and build 
 
 ## Your README goes here
 
-**Replace this entire file** with your own README once you start building. A good project README includes:
-
 ### 1. What it is
-One or two sentences describing your quiz app — what topics it covers, what makes it yours.
+Our quiz app allows users to create and take quizzes across different categories. Users can select the category they’re interested in and choose a difficulty level, with assessments adjusted accordingly.
+
+What makes this app unique is the customization: we designed the UI to match our vision and added icons to enhance the overall look and feel, making the experience more engaging and user-friendly.
 
 ### 2. Live demo
 Link to your deployed Vercel URL.
@@ -15,7 +15,7 @@ Link to your deployed Vercel URL.
 ### 3. How to run locally
 
 ```bash
-git clone git@github.com:YOUR-USERNAME/quiz-app-starter.git
+git clone git@github.com:Matsoso642/quiz-app-starter.git
 cd quiz-app-starter
 npm install
 npm run dev
