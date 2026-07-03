@@ -25,7 +25,21 @@ npm run dev
 
 ### 4. What you learned
 
-A short reflection — what concepts clicked, what was hard, what you'd do differently.
+## What I Learned Building It
+
+- **React state doesn't update instantly.** Calling `setState` inside a function doesn't give you the new value on the next line — I hit this directly when building the "next question" logic and had to track the updated answers array in a local variable instead of trusting state to be current right away.
+
+- **`useEffect`'s dependency array controls when it re-runs — including bugs you didn't mean to write.** My quiz timer kept resetting every time the question changed because I had `currentIndex` in the dependency array. Removing it (and rethinking what the timer should actually track) taught me to think of dependencies as "what should cause this to run again," not just "what values does this use."
+
+- **Passing data between pages isn't automatic.** With `react-router-dom`, I had to explicitly pass quiz results through `navigate(path, { state })` — forgetting this meant my results page loaded with nothing on it, even though the quiz itself worked fine. It also doesn't survive a page refresh, which pushed me to add a `sessionStorage` fallback.
+
+- **TypeScript catches mismatches before they become runtime bugs.** Defining shared interfaces (`Question`, `AnswerRecord`) for data passed between components meant typos or shape mismatches showed up immediately in my editor instead of as a blank screen in the browser.
+
+- **A real Git workflow is different from just "using Git."** Working in feature branches, opening PRs, and getting peer review before merging forced me to write smaller, more reviewable changes and communicate what each branch actually did.
+
+- **Deployment isn't a one-time step.** Connecting the repo to Vercel meant every push to `main` triggers a fresh build — so a broken build shows up immediately, which changed how carefully I tested before pushing.
+
+- **Debugging is a skill, not a fallback.** The most useful learning didn't come from writing new features — it came from tracing why the timer reset or why results showed up empty, and learning to isolate exactly where in the data flow things broke.
 
 ---
 
