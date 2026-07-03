@@ -23,9 +23,9 @@ npm install
 npm run dev
 ```
 
-### 4. What you learned
+### 4. What we learnt
 
-## What I Learned Building It
+## What We Learnt Building It
 
 - **React state doesn't update instantly.** Calling `setState` inside a function doesn't give you the new value on the next line — I hit this directly when building the "next question" logic and had to track the updated answers array in a local variable instead of trusting state to be current right away.
 
