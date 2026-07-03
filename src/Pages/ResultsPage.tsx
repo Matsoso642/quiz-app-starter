@@ -6,52 +6,12 @@ import CircularScore from "../components/CircularScore";
 import ActionButtons from "../components/ActionButtons";
 import CategoryBreakdown from "../components/CategoryBreakdown";
 
-//mock data swap for state logic
+import { useEffect, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import type { AnswerRecord, QuizResultsState } from "../types/results";
 
-const MOCK_SCORE = 8;
-const MOCK_TOTAL = 10;
-const MOCK_ACCURACY = Math.round((MOCK_SCORE / MOCK_TOTAL) * 100);
-const MOCK_TIME_TAKEN = "4.32";
-
-const MOCK_CATEGORY_BREAKDOWN = [
-  { category: "git", correct: 3, total: 4 },
-  { category: "react", correct: 3, total: 4 },
-  { category: "typescript", correct: 3, total: 4 },
-  { category: "devtools", correct: 3, total: 4 },
-  { category: "deployment", correct: 3, total: 4 },
-  { category: "html-css", correct: 3, total: 4 },
-];
-
-const MOCK_REVIEW = [
-  {
-    id: 1,
-    question: "What does `git clone` do?",
-    isCorrect: true,
-    yourAnswer: "Downloads a repository from GitHub to your machine",
-    correctAnswer: "Downloads a repository from GitHub to your machine",
-    explanation:
-      "git clone creates a local copy of a remote repository, including its full commit history.",
-  },
-  {
-    id: 2,
-    question: "What is the purpose of a `.gitignore` file?",
-    isCorrect: false,
-    yourAnswer: "Stores your GitHub login credentials",
-    correctAnswer: "Specifies files and folders Git should not track",
-    explanation:
-      ".gitignore tells Git which files or directories to exclude from version control, like node_modules or .env files.",
-  },
-  {
-    id: 3,
-    question: "What is a React component?",
-    isCorrect: true,
-    yourAnswer: "A reusable piece of UI, typically a function that returns JSX",
-    correctAnswer:
-      "A reusable piece of UI, typically a function that returns JSX",
-    explanation:
-      "Components are the building blocks of a React app — reusable functions that return UI described in JSX.",
-  },
-];
+const STORAGE_KEY = "quiz-app:last-results";
+const LEADERBOARD_KEY = "quiz-app:leaderboard";
 
 function getPerformanceLabel(accuracy: number) {
   if (accuracy >= 90) return "Outstanding";
@@ -60,30 +20,119 @@ function getPerformanceLabel(accuracy: number) {
   return "Keep practicing";
 }
 
+function formatTime(totalSeconds: number): string {
+  const safeSeconds = Math.max(0, Math.round(totalSeconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function buildReviewItems(answers: AnswerRecord[]) {
+  return answers.map((answer) => ({
+    id: answer.question.id,
+    question: answer.question.question,
+    isCorrect: answer.isCorrect,
+    yourAnswer:
+      answer.selectedAnswer !== null
+        ? answer.question.options[answer.selectedAnswer]
+        : "No answer",
+    correctAnswer: answer.question.options[answer.question.correctAnswer],
+    explanation: answer.question.explanation,
+  }));
+}
+
+function buildCategoryBreakdown(answers: AnswerRecord[]) {
+  const byCategory = new Map<string, { correct: number; total: number }>();
+  for (const answer of answers) {
+    const category = answer.question.category;
+    const entry = byCategory.get(category) ?? { correct: 0, total: 0 };
+    entry.total += 1;
+    if (answer.isCorrect) entry.correct += 1;
+    byCategory.set(category, entry);
+  }
+  return Array.from(byCategory.entries()).map(([category, stats]) => ({
+    category,
+    ...stats,
+  }));
+}
+
 export default function ResultsPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Prefer results passed via navigate("/results", { state }); fall back to
+  // sessionStorage so a page refresh doesn't lose them.
+  const resultsState = useMemo<QuizResultsState | null>(() => {
+    const fromRouter = location.state as QuizResultsState | undefined;
+    if (fromRouter?.answers?.length) {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(fromRouter));
+      return fromRouter;
+    }
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    return stored ? (JSON.parse(stored) as QuizResultsState) : null;
+  }, [location.state]);
+
+  const answers = resultsState?.answers ?? [];
+  const timeTakenSeconds = resultsState?.timeTakenSeconds ?? 0;
+
+  const score = answers.filter((a) => a.isCorrect).length;
+  const total = answers.length;
+  const accuracy = total > 0 ? Math.round((score / total) * 100) : 0;
+  const timeTaken = formatTime(timeTakenSeconds);
+  const performanceLabel = getPerformanceLabel(accuracy);
+
+  const categoryBreakdown = useMemo(
+    () => buildCategoryBreakdown(answers),
+    [answers],
+  );
+  const reviewItems = useMemo(() => buildReviewItems(answers), [answers]);
+
+  // Record this attempt for the leaderboard once, when results first load.
+  useEffect(() => {
+    if (!resultsState || total === 0) return;
+    const entry = {
+      score,
+      total,
+      accuracy,
+      timeTakenSeconds,
+      date: new Date().toISOString(),
+    };
+    const existing = JSON.parse(localStorage.getItem(LEADERBOARD_KEY) ?? "[]");
+    localStorage.setItem(LEADERBOARD_KEY, JSON.stringify([...existing, entry]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resultsState]);
+
+  if (!resultsState || total === 0) {
+    return (
+      <div className="results-wrapper text-center py-5">
+        <p className="text-muted mb-3">No quiz results to show yet.</p>
+        <button className="btn btn-primary" onClick={() => navigate("/")}>
+          Start a Quiz
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="results-wrapper">
       <ResultsHeader
-        score={MOCK_SCORE}
-        total={MOCK_TOTAL}
-        performanceLabel={getPerformanceLabel(MOCK_ACCURACY)}
+        score={score}
+        total={total}
+        performanceLabel={performanceLabel}
       />
 
       <SummaryCards
-        score={MOCK_SCORE}
-        total={MOCK_TOTAL}
-        accuracy={MOCK_ACCURACY}
-        timeTaken={MOCK_TIME_TAKEN}
+        score={score}
+        total={total}
+        accuracy={accuracy}
+        timeTaken={timeTaken}
       />
 
-      <CircularScore
-        accuracy={MOCK_ACCURACY}
-        label={getPerformanceLabel(MOCK_ACCURACY)}
-      />
+      <CircularScore accuracy={accuracy} label={performanceLabel} />
 
-      <CategoryBreakdown data={MOCK_CATEGORY_BREAKDOWN} />
+      <CategoryBreakdown data={categoryBreakdown} />
 
-      <ReviewList items={MOCK_REVIEW} />
+      <ReviewList items={reviewItems} />
 
       <ActionButtons />
     </div>
